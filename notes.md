@@ -76,7 +76,7 @@ This can be configured with the flag `-d` with `run`, or the opposite `-a` with 
 
 If already running, we can use `docker attach [container]`
 
-To interact with a terminal stdin we can run with `-i`
+To interact with a terminal stdin we can run with `-i`, and with `-t`.
 
 `docker logs` will pull the logs from a continer, and with `-f` it will attach to listen to logs ongoing.
 
