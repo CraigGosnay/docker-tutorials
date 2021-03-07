@@ -1,7 +1,10 @@
 - [Module 1](#module-1)
   - [Basics](#basics)
-    - [Images Intro](#images-intro)
+    - [Images](#images)
+      - [Layers](#layers)
     - [Containers](#containers)
+      - [Running / Starting](#running--starting)
+      - [Attached / Detached / Interactive / Logs](#attached--detached--interactive--logs)
     - [Dockerfile](#dockerfile)
       - [FROM](#from)
       - [COPY](#copy)
@@ -18,7 +21,7 @@
 
 ## Basics
 
-### Images Intro
+### Images
 
 Template / blueprint for a container.
 
@@ -45,9 +48,37 @@ then -i (-interactive) will force STDIN to be open and -t will attach a terminal
 
 Usually however we will use these premade images as a starting point to build up images for our own application.
 
+Images are read-only! They are a snapshot of our source & deps at the time we create the image - so any subsequent edits will require creating a new image. (This is one of the major points of containerization).
+
+#### Layers
+
+Images are layer based. Docker inteprets each instruction in the file as a layer, and will cache these, so rebuiling an image with only a small change will update only that & subsequent layers. 
+
+The container can be understood as another layer on top of the image, which provides i/o functionality etc.
+
+With this in mind, the ordering of DOCKERFILE instructions can make significant difference in the time it takes to build an image after changes, e.g if we don't change package.json, we do not need to rerun npm install despite changing our code so we can place that run command prior to the code copy, and save rebuilding each time and pul from the cache.
+
 ### Containers
 
 An instantiation of an image that actually 'runs'.
+
+#### Running / Starting
+
+`docker run` will run a command / an image in a new container, attached by default.
+
+`docker start` will restart an existing contianer, detached by default.
+
+#### Attached / Detached / Interactive / Logs
+
+Running attached will mean the terminal will have the process in the foreground and any sys.out, console logs etc will be displayed.
+
+This can be configured with the flag `-d` with `run`, or the opposite `-a` with `start`.
+
+If already running, we can use `docker attach [container]`
+
+To interact with a terminal stdin we can run with `-i`
+
+`docker logs` will pull the logs from a continer, and with `-f` it will attach to listen to logs ongoing.
 
 ### Dockerfile
 
@@ -118,5 +149,10 @@ The `-p` maps an external port exposure to an internal docker port. You can also
 # Useful Commands
 
 ```
-docker ps -a # list all containers 
+docker ps -a    # list all containers 
+docker ps       # list running containers
+docker images   # list images
+docker build .  # build based on dockerfile in curr dir
+docker run      # run a command in a new container
+docker start    # restart a stopped container 
 ```
